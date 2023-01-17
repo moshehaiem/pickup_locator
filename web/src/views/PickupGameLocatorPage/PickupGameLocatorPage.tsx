@@ -1,9 +1,9 @@
 import React from 'react';
-import Map from './components/Map';
+import PickupGameMap from './components/PickupGameMap';
 
 const PickupLocator = (): JSX.Element => {
   return (
-    <Map />
+    <PickupGameMap />
   );
 }
 

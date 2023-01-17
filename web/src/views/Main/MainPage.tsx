@@ -1,9 +1,9 @@
 import React from 'react';
-import PickupLocator from '../PickupLocator/PickupLocator';
+import PickupGameLocatorPage from '../PickupGameLocatorPage/PickupGameLocatorPage';
 
 const MainPage = (): JSX.Element => {
   return (
-    <PickupLocator />
+    <PickupGameLocatorPage />
   );
 }
 
