@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Map from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
  
 const PickupGameMap = (): JSX.Element => {
   const [longitude, setLongitude] = useState(-122.4);
@@ -8,12 +9,7 @@ const PickupGameMap = (): JSX.Element => {
 
   return (
     <Map
-    mapboxAccessToken='***'
-      initialViewState={{
-        longitude: longitude,
-        latitude: latitude,
-        zoom: zoom
-      }}
+      mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
       style={{width: 600, height: 400}}
       mapStyle="mapbox://styles/mapbox/streets-v9"
     />
