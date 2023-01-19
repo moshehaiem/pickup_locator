@@ -1,18 +1,55 @@
-import React, { useState } from 'react';
-import Map from 'react-map-gl';
+import React, { useState, useCallback } from 'react';
+import { Map, MapProvider, Popup, useMap } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
  
 const PickupGameMap = (): JSX.Element => {
-  const [longitude, setLongitude] = useState(-122.4);
-  const [latitude, setLatitude] = useState(37.8);
-  const [zoom, setZoom] = useState(14);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupCoordinates, setPopupCoordinates] = useState([0, 0]);
+  const { map } = useMap();
+
+  const flyToClickedPoint = useCallback((clickedPoint: any): void => {
+    map.flyTo({
+      center: clickedPoint.geometry.coordinates,
+      zoom: 15
+    });
+  }, []);
+
+  const handleCreatePickupLocation = useCallback((event: any): void => {
+    setShowPopup(true);
+    setPopupCoordinates([event.point.x, event.point.y])
+    console.log('create pickup location');
+    console.log(event);
+  }, []);
+
+  const handleMapClick = useCallback((event: any): void => {
+    const features = map.queryRenderedFeatures(event.point, {
+      layers: ['locations']
+    });
+    if (!features.length){
+      handleCreatePickupLocation(event);
+    } else{
+      const clickedPoint = features[0];
+      flyToClickedPoint(clickedPoint);
+    }
+  }, [flyToClickedPoint, handleCreatePickupLocation, map]);
 
   return (
-    <Map
-      mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
-      style={{width: 600, height: 400}}
-      mapStyle="mapbox://styles/mapbox/streets-v9"
-    />
+    <MapProvider>
+      <Map
+        id="map"
+        mapboxAccessToken=''
+        style={{width: 600, height: 400}}
+        mapStyle="mapbox://styles/mapbox/streets-v9"
+        onClick={handleMapClick}>
+          {showPopup && (
+            <Popup longitude={popupCoordinates[0]} latitude={popupCoordinates[1]}
+              anchor="bottom"
+              onClose={() => setShowPopup(false)}>
+              Add event
+            </Popup>)
+          }
+        </Map>
+    </MapProvider>
   );
 }
 
