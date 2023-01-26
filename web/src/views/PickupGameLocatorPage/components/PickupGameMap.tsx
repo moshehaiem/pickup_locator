@@ -81,6 +81,7 @@ const PickupGameMap = (): JSX.Element => {
         {locationMarkers}
         {location && (
           <Popup longitude={location.longitude} latitude={location.latitude}
+            key={location.longitude + location.latitude}
             anchor="top"
             onClose={() => setLocation(null)}>
             <PickupGamePopup location={location} />
