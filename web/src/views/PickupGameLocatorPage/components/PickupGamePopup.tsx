@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 
 const PickupGamePopup = ({ location }: any): JSX.Element => {
   const [loc, setLoc] = useState(location);
+  const isSubmittable = !(loc.athletesPresent && loc.athletesNeeded && loc.startTime && loc.endTime);
 
   const handleSubmit = useCallback((event: any): void => {
     event.preventDefault();
@@ -57,7 +58,7 @@ const PickupGamePopup = ({ location }: any): JSX.Element => {
       />
       </label>
       <br />
-      <input type="submit" />
+      <input type="submit" disabled={isSubmittable} />
     </form>
   );
 }
