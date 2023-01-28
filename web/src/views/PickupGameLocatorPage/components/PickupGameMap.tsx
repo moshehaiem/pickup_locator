@@ -1,12 +1,14 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import { GeolocateControl, Map, MapRef, Marker, Popup } from 'react-map-gl';
+import { FullscreenControl, GeolocateControl, Map, MapRef, Marker, NavigationControl, Popup, ScaleControl } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import PickupGamePopup from './PickupGamePopup';
+
  
 const PickupGameMap = (): JSX.Element => {
   const [location, setLocation] = useState<any>(null);
   const [viewport, setViewport] = useState<any>(null);
   const mapRef = useRef<MapRef | null>(null);
+  
 
   const flyToClickedPoint = useCallback((lng: number, lat: number): void => {
     if(mapRef && mapRef.current){
@@ -18,10 +20,8 @@ const PickupGameMap = (): JSX.Element => {
   }, [mapRef]);
 
   const handleMapClick = useCallback((loc: any): void => {
-    if(mapRef && mapRef.current){
       flyToClickedPoint(loc.longitude, loc.latitude);
       setLocation(loc);
-    }
   }, [flyToClickedPoint]);
 
   const locationMarkers = useMemo(
@@ -29,8 +29,8 @@ const PickupGameMap = (): JSX.Element => {
       [
         {
           "latitude": 34.05794190025496, "longitude": -118.39487760130953, "athletesPresent": 6,
-          "athletesNeeded": 10, "startTime": new Date().toISOString().substring(0, 16),
-          "endTime": new Date().toISOString().substring(0, 16), "message": 'Come hoop we got good games!'
+          "athletesNeeded": 10, "date": '2023-01-27', "startTime": "09:00",
+          "endTime": "11:00", "message": 'Come hoop we got good games!'
         }
       ].map((loc, index) => (
       <Marker
@@ -77,7 +77,10 @@ const PickupGameMap = (): JSX.Element => {
         mapStyle="mapbox://styles/mapbox/streets-v9"
         onClick={(e) => handleMapClick({"latitude": e.lngLat.lat, "longitude": e.lngLat.lng, "athletesPresent": null, "athletesNeeded": null, "startTime": null,
         "endTime": null, "message": null})}>
-        <GeolocateControl />
+        <GeolocateControl position="top-left" />
+        <FullscreenControl position="top-left" />
+        <NavigationControl position="top-left" />
+        <ScaleControl />
         {locationMarkers}
         {location && (
           <Popup longitude={location.longitude} latitude={location.latitude}
