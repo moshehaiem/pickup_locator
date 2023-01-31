@@ -12,7 +12,7 @@ export default function useCreateLocation(): UseMutationResult<
 
   const createLocation = useCallback(
     (location: any): Promise<AxiosResponse<any>> => {
-      return axios.post('locations/', location);
+      return axios.post('http://localhost:8000/api/locations/', location);
     },
     [],
   );

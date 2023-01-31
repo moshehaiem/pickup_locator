@@ -1,13 +1,28 @@
 import React, { useCallback, useState } from 'react';
+import useCreateLocation from '../../../hooks/location/useCreateLocation';
 
 const PickupGamePopup = ({ location }: any): JSX.Element => {
   const [loc, setLoc] = useState(location);
-  const isSubmittable = !(loc.athletesPresent && loc.athletesNeeded && loc.startTime && loc.endTime && loc.startTime < loc.endTime);
+  const isSubmittable = !(loc.athletes_present && loc.athletes_needed && loc.start_time && loc.end_time && loc.start_time < loc.end_time);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+
+  const createLocationMutation = useCreateLocation();
 
   const handleSubmit = useCallback((event: any): void => {
     event.preventDefault();
-    console.log(loc);
-  }, [loc]);
+    setLoadingSubmit(true);
+    createLocationMutation.mutate(loc, {
+      onError: error => {
+        console.log('Location creation failed', error.response?.data.message);
+      },
+      onSuccess: response => {
+        console.log('Location creation success', `${response.data.name} successfully created.`);
+      },
+      onSettled: () => {
+        setLoadingSubmit(false);
+      },
+    });
+  }, [createLocationMutation, loc]);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -15,8 +30,8 @@ const PickupGamePopup = ({ location }: any): JSX.Element => {
     <input 
       type="number" 
       min={0}
-      name="athletesPresent" 
-      value={loc.athletesPresent || ""} 
+      name="athletes_present" 
+      value={loc.athletes_present || ""} 
       onChange={(event) => setLoc({...loc, [event.target.name]: event.target.valueAsNumber})}
     />
     </label>
@@ -25,8 +40,8 @@ const PickupGamePopup = ({ location }: any): JSX.Element => {
       <input 
         type="number" 
         min={0}
-        name="athletesNeeded" 
-        value={loc.athletesNeeded || ""} 
+        name="athletes_needed" 
+        value={loc.athletes_needed || ""} 
         onChange={(event) => setLoc({...loc, [event.target.name]: event.target.valueAsNumber})}
       />
       </label>
@@ -43,8 +58,8 @@ const PickupGamePopup = ({ location }: any): JSX.Element => {
       <label>Start Time
       <input 
         type="time" 
-        name="startTime" 
-        value={loc.startTime || ""}
+        name="start_time" 
+        value={loc.start_time || ""}
         onChange={(event) => setLoc({...loc, [event.target.name]: event.target.value})}
       />
       </label>
@@ -52,8 +67,8 @@ const PickupGamePopup = ({ location }: any): JSX.Element => {
       <label>End Time
       <input 
         type="time" 
-        name="endTime" 
-        value={loc.endTime || ""} 
+        name="end_time" 
+        value={loc.end_time || ""} 
         onChange={(event) => setLoc({...loc, [event.target.name]: event.target.value})}
       />
       </label>
@@ -67,7 +82,7 @@ const PickupGamePopup = ({ location }: any): JSX.Element => {
       />
       </label>
       <br />
-      <input type="submit" disabled={isSubmittable} />
+      <input type="submit" disabled={isSubmittable || loadingSubmit} />
     </form>
   );
 }

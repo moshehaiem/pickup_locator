@@ -2,12 +2,15 @@ import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { FullscreenControl, GeolocateControl, Map, MapRef, Marker, NavigationControl, Popup, ScaleControl } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import PickupGamePopup from './PickupGamePopup';
+import useListLocations from '../../../hooks/location/useListLocations';
 
  
 const PickupGameMap = (): JSX.Element => {
   const [location, setLocation] = useState<any>(null);
   const [viewport, setViewport] = useState<any>(null);
   const mapRef = useRef<MapRef | null>(null);
+
+  const { data, isSuccess, isLoading } = useListLocations();
   
 
   const flyToClickedPoint = useCallback((lng: number, lat: number): void => {
@@ -26,13 +29,7 @@ const PickupGameMap = (): JSX.Element => {
 
   const locationMarkers = useMemo(
     () =>
-      [
-        {
-          "latitude": 34.05794190025496, "longitude": -118.39487760130953, "athletesPresent": 6,
-          "athletesNeeded": 10, "date": '2023-01-27', "startTime": "09:00",
-          "endTime": "11:00", "message": 'Come hoop we got good games!'
-        }
-      ].map((loc, index) => (
+    data?.pages[0].data.map((loc: any, index: number) => (
       <Marker
         key={`marker-${index}`}
         longitude={loc.longitude}
@@ -45,7 +42,7 @@ const PickupGameMap = (): JSX.Element => {
         >
       </Marker>
       )),
-    [handleMapClick]
+    [data?.pages, handleMapClick]
   );
 
   useEffect(() => {
@@ -75,8 +72,8 @@ const PickupGameMap = (): JSX.Element => {
         mapboxAccessToken=''
         style={{width: 1000, height: 800}}
         mapStyle="mapbox://styles/mapbox/streets-v9"
-        onClick={(e) => handleMapClick({"latitude": e.lngLat.lat, "longitude": e.lngLat.lng, "athletesPresent": null, "athletesNeeded": null, "startTime": null,
-        "endTime": null, "message": null})}>
+        onClick={(e) => handleMapClick({"latitude": e.lngLat.lat, "longitude": e.lngLat.lng, "athletes_present": null, "athletes_needed": null, "start_time": null,
+        "end_time": null, "message": null})}>
         <GeolocateControl position="top-left" />
         <FullscreenControl position="top-left" />
         <NavigationControl position="top-left" />

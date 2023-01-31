@@ -18,7 +18,7 @@ function useListLocations(): UseInfiniteQueryResult<AxiosResponse<any>> {
     }: QueryKeyType): Promise<AxiosResponse<any>> => {
       const params = pageParam;
 
-      return axios.get(`locations/?${encodeUrlParams(params)}`);
+      return axios.get(`http://localhost:8000/api/locations/?${encodeUrlParams(params)}`);
     },
     [],
   );
