@@ -10,7 +10,7 @@ const PickupGameMap = (): JSX.Element => {
   const [viewport, setViewport] = useState<any>(null);
   const mapRef = useRef<MapRef | null>(null);
 
-  const { data, isSuccess, isLoading } = useListLocations();
+  const { data } = useListLocations();
   
 
   const flyToClickedPoint = useCallback((lng: number, lat: number): void => {
@@ -66,6 +66,8 @@ const PickupGameMap = (): JSX.Element => {
     <div>
     {viewport && (
       <Map
+        minZoom={16}
+        maxZoom={20}
         ref={mapRef}
         reuseMaps
         initialViewState={viewport}
@@ -78,10 +80,10 @@ const PickupGameMap = (): JSX.Element => {
         <FullscreenControl position="top-left" />
         <NavigationControl position="top-left" />
         <ScaleControl />
-        {locationMarkers}
+        {data && locationMarkers}
         {location && (
           <Popup longitude={location.longitude} latitude={location.latitude}
-            key={location.longitude + location.latitude}
+            key={`${location.longitude}${location.latitude}`}
             anchor="top"
             onClose={() => setLocation(null)}>
             <PickupGamePopup location={location} />

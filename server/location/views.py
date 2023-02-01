@@ -3,6 +3,6 @@ from .serializers import LocationSerializer
 from .models import Location
 
 
-class LocationView(viewsets.ModelViewSet):
+class LocationViewSet(viewsets.ModelViewSet):
     serializer_class = LocationSerializer
     queryset = Location.objects.all()

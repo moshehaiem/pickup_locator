@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import useCreateLocation from '../../../hooks/location/useCreateLocation';
+import useDeleteLocation from '../../../hooks/location/useDeleteLocation';
+import useUpdateLocation from '../../../hooks/location/useUpdateLocation';
 
 const PickupGamePopup = ({ location }: any): JSX.Element => {
   const [loc, setLoc] = useState(location);
@@ -7,25 +9,57 @@ const PickupGamePopup = ({ location }: any): JSX.Element => {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const createLocationMutation = useCreateLocation();
+  const updateLocationMutation = useUpdateLocation();
+  const deleteLocationMutation = useDeleteLocation();
 
   const handleSubmit = useCallback((event: any): void => {
     event.preventDefault();
     setLoadingSubmit(true);
-    createLocationMutation.mutate(loc, {
-      onError: error => {
-        console.log('Location creation failed', error.response?.data.message);
+    if(loc.location_id){
+      updateLocationMutation.mutate(loc, {
+        onError: () => {
+          console.log('Location update failed');
+        },
+        onSuccess: () => {
+          console.log('Location update success');
+        },
+        onSettled: () => {
+          setLoadingSubmit(false);
+        },
+      });
+    } else{
+      createLocationMutation.mutate(loc, {
+        onError: () => {
+          console.log('Location creation failed');
+        },
+        onSuccess: () => {
+          console.log('Location creation success');
+        },
+        onSettled: () => {
+          setLoadingSubmit(false);
+        },
+      });
+    }
+  }, [createLocationMutation, loc, updateLocationMutation]);
+
+  const handleDelete = useCallback((event: any): void => {
+    event.preventDefault();
+    setLoadingSubmit(true);
+    deleteLocationMutation.mutate(loc.location_id, {
+      onError: () => {
+        console.log('Location delete failed');
       },
-      onSuccess: response => {
-        console.log('Location creation success', `${response.data.name} successfully created.`);
+      onSuccess: () => {
+        console.log('Location delete success');
       },
       onSettled: () => {
         setLoadingSubmit(false);
       },
     });
-  }, [createLocationMutation, loc]);
+  }, [deleteLocationMutation, loc.location_id]);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div>
     <label>Athletes Present
     <input 
       type="number" 
@@ -82,8 +116,8 @@ const PickupGamePopup = ({ location }: any): JSX.Element => {
       />
       </label>
       <br />
-      <input type="submit" disabled={isSubmittable || loadingSubmit} />
-    </form>
+      <input type="submit" disabled={isSubmittable || loadingSubmit} onClick={(event) => handleSubmit(event)}/>
+    </div>
   );
 }
 
