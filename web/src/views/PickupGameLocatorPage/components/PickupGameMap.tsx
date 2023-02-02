@@ -10,7 +10,13 @@ const PickupGameMap = (): JSX.Element => {
   const [viewport, setViewport] = useState<any>(null);
   const mapRef = useRef<MapRef | null>(null);
 
-  const { data } = useListLocations();
+  const { data } = useListLocations({
+    neLatitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lat),
+    neLongitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lng),
+    swLatidude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lat),
+    swLongitude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lng),
+    enabled: !!mapRef && !!mapRef.current
+  });
   
 
   const flyToClickedPoint = useCallback((lng: number, lat: number): void => {
@@ -29,7 +35,7 @@ const PickupGameMap = (): JSX.Element => {
 
   const locationMarkers = useMemo(
     () =>
-    data?.pages[0].data.map((loc: any, index: number) => (
+    data?.data.map((loc: any, index: number) => (
       <Marker
         key={`marker-${index}`}
         longitude={loc.longitude}
@@ -42,7 +48,7 @@ const PickupGameMap = (): JSX.Element => {
         >
       </Marker>
       )),
-    [data?.pages, handleMapClick]
+    [data, handleMapClick]
   );
 
   useEffect(() => {

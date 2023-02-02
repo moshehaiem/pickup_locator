@@ -1,32 +1,36 @@
 import { useCallback } from 'react';
 
 import axios, { AxiosResponse } from 'axios';
-import { useInfiniteQuery, UseInfiniteQueryResult } from 'react-query';
-import { encodeUrlParams, getUrlParams } from '../../utils/url';
-import { UrlParams } from '../../types/url-types';
+import { useQuery, UseQueryResult } from 'react-query';
 
-interface QueryKeyType {
-  pageParam?: UrlParams;
-  queryKey: (string | undefined)[];
+interface IUseListLocationsProps {
+  neLatitude: number | null;
+  neLongitude: number | null;
+  swLatidude: number | null;
+  swLongitude: number | null;
+  enabled: boolean;
 }
 
-function useListLocations(): UseInfiniteQueryResult<AxiosResponse<any>> {
-
-  const fetchLocations = useCallback(
-    ({
-      pageParam = { limit: '20', offset: '0' },
-    }: QueryKeyType): Promise<AxiosResponse<any>> => {
-      const params = pageParam;
-
-      return axios.get(`http://localhost:8000/api/locations/?${encodeUrlParams(params)}`);
-    },
-    [],
-  );
-
-  return useInfiniteQuery(['locations'], fetchLocations, {
-    getNextPageParam: page => {
-      return page.data.next ? getUrlParams(page.data.next) : undefined;
-    },
+function useListLocations({
+  neLatitude,
+  neLongitude,
+  swLatidude,
+  swLongitude,
+  enabled,
+}: IUseListLocationsProps): UseQueryResult<AxiosResponse<any>> {
+  const fetchLocations = useCallback((): Promise<AxiosResponse<any>> => {
+    return axios.get(
+      `http://localhost:8000/api/locations/?neLatitude=${neLatitude}&neLongitude=${neLongitude}&swLatidude=${swLatidude}&swLongitude=${swLongitude}`,
+    );
+  }, [neLatitude, neLongitude, swLatidude, swLongitude]);
+  return useQuery([`listLocations`, neLatitude, neLongitude, swLatidude, swLongitude], fetchLocations, {
+    refetchIntervalInBackground: true,
+    refetchInterval: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: false,
+    enabled,
   });
 }
 
