@@ -77,7 +77,7 @@ const PickupGameMap = (): JSX.Element => {
         ref={mapRef}
         reuseMaps
         initialViewState={viewport}
-        mapboxAccessToken=''
+        mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
         style={{width: 1000, height: 800}}
         mapStyle="mapbox://styles/mapbox/streets-v9"
         onClick={(e) => handleMapClick({"latitude": e.lngLat.lat, "longitude": e.lngLat.lng, "athletes_present": null, "athletes_needed": null, "start_time": null,

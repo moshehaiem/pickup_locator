@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import { useQuery, UseQueryResult } from 'react-query';
+import useAxiosClient from '../../axiosClient';
 
 interface IUseListLocationsProps {
   neLatitude: number | null;
@@ -18,11 +19,12 @@ function useListLocations({
   swLongitude,
   enabled,
 }: IUseListLocationsProps): UseQueryResult<AxiosResponse<any>> {
+  const axiosClient = useAxiosClient()
   const fetchLocations = useCallback((): Promise<AxiosResponse<any>> => {
-    return axios.get(
-      `http://localhost:8000/api/locations/?neLatitude=${neLatitude}&neLongitude=${neLongitude}&swLatidude=${swLatidude}&swLongitude=${swLongitude}`,
+    return axiosClient.get(
+      `locations/?neLatitude=${neLatitude}&neLongitude=${neLongitude}&swLatidude=${swLatidude}&swLongitude=${swLongitude}`,
     );
-  }, [neLatitude, neLongitude, swLatidude, swLongitude]);
+  }, [axiosClient, neLatitude, neLongitude, swLatidude, swLongitude]);
   return useQuery([`listLocations`, neLatitude, neLongitude, swLatidude, swLongitude], fetchLocations, {
     refetchIntervalInBackground: true,
     refetchInterval: 1000 * 60 * 5,

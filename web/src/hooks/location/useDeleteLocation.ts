@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import { useMutation, UseMutationResult, useQueryClient } from 'react-query';
+import useAxiosClient from '../../axiosClient';
 
 export default function useDeleteLocation(): UseMutationResult<
   AxiosResponse<null>,
@@ -9,12 +10,13 @@ export default function useDeleteLocation(): UseMutationResult<
   string
 > {
   const queryClient = useQueryClient();
+  const axiosClient = useAxiosClient();
 
   const deleteLocation = useCallback(
     (location_id: string): Promise<AxiosResponse<null>> => {
-      return axios.delete(`http://localhost:8000/api/locations/${location_id}/`);
+      return axiosClient.delete(`locations/${location_id}/`);
     },
-    [],
+    [axiosClient],
   );
 
   return useMutation(deleteLocation, {

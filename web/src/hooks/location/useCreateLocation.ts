@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import { useMutation, useQueryClient, UseMutationResult } from 'react-query';
+import useAxiosClient from '../../axiosClient';
 
 export default function useCreateLocation(): UseMutationResult<
   AxiosResponse<any>,
@@ -9,12 +10,13 @@ export default function useCreateLocation(): UseMutationResult<
   any
 > {
   const queryClient = useQueryClient();
+  const axiosClient = useAxiosClient();
 
   const createLocation = useCallback(
     (location: any): Promise<AxiosResponse<any>> => {
-      return axios.post('http://localhost:8000/api/locations/', location);
+      return axiosClient.post('locations/', location);
     },
-    [],
+    [axiosClient],
   );
   return useMutation(createLocation, {
     onSuccess: () => {
