@@ -12,4 +12,4 @@ class Location(models.Model):
     date = models.DateField(blank=False, null=False)
     start_time = models.TimeField(blank=False, null=False)
     end_time = models.TimeField(blank=False, null=False)
-    message = models.TextField()
+    message = models.TextField(blank=True, null=True)

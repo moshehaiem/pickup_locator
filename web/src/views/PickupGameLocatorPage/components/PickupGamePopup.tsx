@@ -2,8 +2,13 @@ import React, { useCallback, useState } from 'react';
 import useCreateLocation from '../../../hooks/location/useCreateLocation';
 import useDeleteLocation from '../../../hooks/location/useDeleteLocation';
 import useUpdateLocation from '../../../hooks/location/useUpdateLocation';
+import { CreateOrUpdateLocation } from '../../../types/CreateOrUpdateLocation';
 
-const PickupGamePopup = ({ location }: any): JSX.Element => {
+interface IPickupGamePopupProps {
+  location: CreateOrUpdateLocation;
+}
+
+const PickupGamePopup = ({ location }: IPickupGamePopupProps): JSX.Element => {
   const [loc, setLoc] = useState(location);
   const isSubmittable = !(loc.athletes_present && loc.athletes_needed && loc.start_time && loc.end_time && loc.start_time < loc.end_time);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
@@ -45,17 +50,19 @@ const PickupGamePopup = ({ location }: any): JSX.Element => {
   const handleDelete = useCallback((event: any): void => {
     event.preventDefault();
     setLoadingSubmit(true);
-    deleteLocationMutation.mutate(loc.location_id, {
-      onError: () => {
-        console.log('Location delete failed');
-      },
-      onSuccess: () => {
-        console.log('Location delete success');
-      },
-      onSettled: () => {
-        setLoadingSubmit(false);
-      },
-    });
+    if(loc.location_id){
+      deleteLocationMutation.mutate(loc.location_id, {
+        onError: () => {
+          console.log('Location delete failed');
+        },
+        onSuccess: () => {
+          console.log('Location delete success');
+        },
+        onSettled: () => {
+          setLoadingSubmit(false);
+        },
+      });
+    }
   }, [deleteLocationMutation, loc.location_id]);
 
   return (
@@ -116,7 +123,8 @@ const PickupGamePopup = ({ location }: any): JSX.Element => {
       />
       </label>
       <br />
-      <input type="submit" disabled={isSubmittable || loadingSubmit} onClick={(event) => handleSubmit(event)}/>
+      <button disabled={!loc.location_id} onClick={(event) => handleDelete(event)}>delete</button>
+      <button disabled={isSubmittable || loadingSubmit} onClick={(event) => handleSubmit(event)}>submit</button>
     </div>
   );
 }

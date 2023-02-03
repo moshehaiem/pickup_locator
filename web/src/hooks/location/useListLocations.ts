@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { AxiosResponse } from 'axios';
 import { useQuery, UseQueryResult } from 'react-query';
 import useAxiosClient from '../../axiosClient';
+import { Location } from '../../types/Location';
 
 interface IUseListLocationsProps {
   neLatitude: number | null;
@@ -18,9 +19,9 @@ function useListLocations({
   swLatidude,
   swLongitude,
   enabled,
-}: IUseListLocationsProps): UseQueryResult<AxiosResponse<any>> {
+}: IUseListLocationsProps): UseQueryResult<AxiosResponse<Location[]>> {
   const axiosClient = useAxiosClient()
-  const fetchLocations = useCallback((): Promise<AxiosResponse<any>> => {
+  const fetchLocations = useCallback((): Promise<AxiosResponse<Location[]>> => {
     return axiosClient.get(
       `locations/?neLatitude=${neLatitude}&neLongitude=${neLongitude}&swLatidude=${swLatidude}&swLongitude=${swLongitude}`,
     );

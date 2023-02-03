@@ -3,11 +3,19 @@ import { FullscreenControl, GeolocateControl, Map, MapRef, Marker, NavigationCon
 import 'mapbox-gl/dist/mapbox-gl.css';
 import PickupGamePopup from './PickupGamePopup';
 import useListLocations from '../../../hooks/location/useListLocations';
+import { Location } from '../../../types/Location';
+import { CreateOrUpdateLocation } from '../../../types/CreateOrUpdateLocation';
 
+interface IViewPortType {
+  longitude: number;
+  latitude: number;
+  zoom: number;
+}
  
 const PickupGameMap = (): JSX.Element => {
-  const [location, setLocation] = useState<any>(null);
-  const [viewport, setViewport] = useState<any>(null);
+  const [location, setLocation] = useState<CreateOrUpdateLocation | null>(null);
+  const [viewport, setViewport] = useState<IViewPortType | null
+>(null);
   const mapRef = useRef<MapRef | null>(null);
 
   const { data } = useListLocations({
@@ -17,7 +25,6 @@ const PickupGameMap = (): JSX.Element => {
     swLongitude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lng),
     enabled: !!mapRef && !!mapRef.current
   });
-  
 
   const flyToClickedPoint = useCallback((lng: number, lat: number): void => {
     if(mapRef && mapRef.current){
@@ -28,14 +35,14 @@ const PickupGameMap = (): JSX.Element => {
     }
   }, [mapRef]);
 
-  const handleMapClick = useCallback((loc: any): void => {
+  const handleMapClick = useCallback((loc: CreateOrUpdateLocation): void => {
       flyToClickedPoint(loc.longitude, loc.latitude);
       setLocation(loc);
   }, [flyToClickedPoint]);
 
   const locationMarkers = useMemo(
     () =>
-    data?.data.map((loc: any, index: number) => (
+    data?.data.map((loc: Location, index: number) => (
       <Marker
         key={`marker-${index}`}
         longitude={loc.longitude}
@@ -80,8 +87,10 @@ const PickupGameMap = (): JSX.Element => {
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
         style={{width: 1000, height: 800}}
         mapStyle="mapbox://styles/mapbox/streets-v9"
-        onClick={(e) => handleMapClick({"latitude": e.lngLat.lat, "longitude": e.lngLat.lng, "athletes_present": null, "athletes_needed": null, "start_time": null,
-        "end_time": null, "message": null})}>
+        onClick={(e) => handleMapClick({
+          "latitude": e.lngLat.lat, "longitude": e.lngLat.lng, "athletes_present": 0, 
+          "athletes_needed": 0, "date": "","start_time": "", 
+          "end_time": "null", "message": null})}>
         <GeolocateControl position="top-left" />
         <FullscreenControl position="top-left" />
         <NavigationControl position="top-left" />

@@ -9,10 +9,10 @@ class LocationViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Location.objects.all()
-        neLatitude = self.request.query_params["neLatitude"]
-        neLongitude = self.request.query_params["neLongitude"]
-        swLatidude = self.request.query_params["swLatidude"]
-        swLongitude = self.request.query_params["swLongitude"]
+        neLatitude = self.request.query_params.get("neLatitude", None)
+        neLongitude = self.request.query_params.get("neLongitude", None)
+        swLatidude = self.request.query_params.get("swLatidude", None)
+        swLongitude = self.request.query_params.get("swLongitude", None)
         if neLatitude:
             queryset = queryset.filter(latitude__lte=int(neLatitude))
         if neLongitude:
