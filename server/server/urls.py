@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from location import views
+from location.views import LocationViewSet
 
 router = routers.DefaultRouter()
-router.register(r'locations', views.LocationView, 'location')
+router.register(r'locations', LocationViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
