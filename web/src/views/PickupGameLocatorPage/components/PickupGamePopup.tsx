@@ -17,8 +17,7 @@ const PickupGamePopup = ({ location }: IPickupGamePopupProps): JSX.Element => {
   const updateLocationMutation = useUpdateLocation();
   const deleteLocationMutation = useDeleteLocation();
 
-  const handleSubmit = useCallback((event: any): void => {
-    event.preventDefault();
+  const handleSubmit = useCallback((): void => {
     setLoadingSubmit(true);
     if(loc.location_id){
       updateLocationMutation.mutate(loc, {
@@ -47,8 +46,7 @@ const PickupGamePopup = ({ location }: IPickupGamePopupProps): JSX.Element => {
     }
   }, [createLocationMutation, loc, updateLocationMutation]);
 
-  const handleDelete = useCallback((event: any): void => {
-    event.preventDefault();
+  const handleDelete = useCallback((): void => {
     setLoadingSubmit(true);
     if(loc.location_id){
       deleteLocationMutation.mutate(loc.location_id, {
@@ -123,8 +121,8 @@ const PickupGamePopup = ({ location }: IPickupGamePopupProps): JSX.Element => {
       />
       </label>
       <br />
-      <button disabled={!loc.location_id} onClick={(event) => handleDelete(event)}>delete</button>
-      <button disabled={isSubmittable || loadingSubmit} onClick={(event) => handleSubmit(event)}>submit</button>
+      <button disabled={!loc.location_id} onClick={handleDelete}>delete</button>
+      <button disabled={isSubmittable || loadingSubmit} onClick={handleSubmit}>submit</button>
     </div>
   );
 }

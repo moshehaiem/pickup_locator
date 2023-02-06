@@ -13,16 +13,30 @@ interface IViewPortType {
 }
  
 const PickupGameMap = (): JSX.Element => {
+  const today = new Date().toISOString().slice(0, 10)
   const [location, setLocation] = useState<CreateOrUpdateLocation | null>(null);
-  const [viewport, setViewport] = useState<IViewPortType | null
->(null);
+  const [viewport, setViewport] = useState<IViewPortType | null>(null);
+  const [athletesNeededStart, setAthletesNeededStart] = useState(1);
+  const [athletesPresentStart, setAthletesPresentStart] = useState(1);
+  const [athletesNeededEnd, setAthletesNeededEnd] = useState(10);
+  const [athletesPresentEnd, setAthletesPresentEnd] = useState(10);
+  const [date, setDate] = useState(today);
+  const [startTime, setStartTime] = useState("00:00");
+  const [endTime, setEndTime] = useState("23:59");
   const mapRef = useRef<MapRef | null>(null);
 
   const { data } = useListLocations({
-    neLatitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lat),
-    neLongitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lng),
-    swLatidude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lat),
-    swLongitude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lng),
+    neLatitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lat).toString(),
+    neLongitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lng).toString(),
+    swLatidude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lat).toString(),
+    swLongitude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lng).toString(),
+    athletesNeededStart: athletesNeededStart.toString(),
+    athletesNeededEnd: athletesNeededEnd.toString(),
+    athletesPresentStart: athletesPresentStart.toString(),
+    athletesPresentEnd: athletesPresentEnd.toString(),
+    date,
+    startTime,
+    endTime,
     enabled: !!mapRef && !!mapRef.current
   });
 
@@ -77,6 +91,59 @@ const PickupGameMap = (): JSX.Element => {
 
   return (
     <div>
+    <label>Athletes Present Range
+      <input 
+        type="number" 
+        name="athletesPresentStart" 
+        value={athletesPresentStart} 
+        onChange={(event) => setAthletesPresentStart(event.target.valueAsNumber)}
+      />
+      <input 
+        type="number" 
+        name="athletesPresentEnd" 
+        value={athletesPresentEnd} 
+        onChange={(event) => setAthletesPresentEnd(event.target.valueAsNumber)}
+      />
+    </label>
+    <label>Athletes Needed Range
+      <input 
+        type="number" 
+        name="athletesNeededStart" 
+        value={athletesNeededStart} 
+        onChange={(event) => setAthletesNeededStart(event.target.valueAsNumber)}
+      />
+      <input 
+        type="number" 
+        name="athletesNeededEnd" 
+        value={athletesNeededEnd} 
+        onChange={(event) => setAthletesNeededEnd(event.target.valueAsNumber)}
+      />
+    </label>
+    <label>Date
+      <input 
+        type="date" 
+        name="date" 
+        value={date} 
+        onChange={(event) => setDate(event.target.value)}
+      />
+    </label>
+    <label>Start Time
+      <input 
+        type="time" 
+        name="startTime" 
+        value={startTime} 
+        onChange={(event) => setStartTime(event.target.value)}
+      />
+    </label>
+    <label>End Time
+      <input 
+        type="time" 
+        name="endTime" 
+        value={endTime} 
+        onChange={(event) => setEndTime(event.target.value)}
+      />
+    </label>
+
     {viewport && (
       <Map
         minZoom={16}
