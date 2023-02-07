@@ -12,13 +12,13 @@ interface IUseListLocationsProps {
   neLongitude: string | null;
   swLatidude: string | null;
   swLongitude: string | null;
-  athletesNeededStart: string | null;
-  athletesNeededEnd: string | null;
-  athletesPresentStart: string | null;
-  athletesPresentEnd: string | null;
-  date: string | null;
-  startTime: string | null;
-  endTime: string | null;
+  athletesNeededStart: string | undefined;
+  athletesNeededEnd: string | undefined;
+  athletesPresentStart: string | undefined;
+  athletesPresentEnd: string | undefined;
+  date: string | undefined;
+  startTime: string | undefined;
+  endTime: string | undefined;
   enabled: boolean;
 }
 
@@ -39,38 +39,38 @@ function useListLocations({
   const axiosClient = useAxiosClient()
   const fetchLocations = useCallback((): Promise<AxiosResponse<Location[]>> => {
     const parameters = {} as UrlParameters;
-    if(neLatitude){
-      parameters.neLatitude = neLatitude;
+    if(!!neLatitude){
+      parameters.ne_latitude = neLatitude;
     }
-    if(neLongitude){
-      parameters.neLongitude = neLongitude;
+    if(!!neLongitude){
+      parameters.ne_longitude = neLongitude;
     }
-    if(swLatidude){
-      parameters.swLatidude = swLatidude;
+    if(!!swLatidude){
+      parameters.sw_latidude = swLatidude;
     }
-    if(swLongitude){
-      parameters.swLongitude = swLongitude;
+    if(!!swLongitude){
+      parameters.sw_longitude = swLongitude;
     }
-    if(athletesNeededStart){
-      parameters.athletesNeededStart = athletesNeededStart;
+    if(!!athletesNeededStart){
+      parameters.athletes_needed_start = athletesNeededStart;
     }
-    if(athletesNeededEnd){
-      parameters.athletesNeededEnd = athletesNeededEnd;
+    if(!!athletesNeededEnd){
+      parameters.athletes_needed_end = athletesNeededEnd;
     }
-    if(athletesPresentStart){
-      parameters.athletesPresentStart = athletesPresentStart;
+    if(!!athletesPresentStart){
+      parameters.athletes_present_start = athletesPresentStart;
     }
-    if(athletesPresentEnd){
-      parameters.athletesPresentEnd = athletesPresentEnd;
+    if(!!athletesPresentEnd){
+      parameters.athletes_present_end = athletesPresentEnd;
     }
-    if(date){
+    if(!!date){
       parameters.date = date;
     }
-    if(startTime){
-      parameters.startTime = startTime;
+    if(!!startTime){
+      parameters.start_time = startTime;
     }
-    if(endTime){
-      parameters.endTime = endTime;
+    if(!!endTime){
+      parameters.end_time = endTime;
     }
 
     return axiosClient.get(`locations/?${createUrlParameters(parameters)}`);
