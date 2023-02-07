@@ -13,16 +13,30 @@ interface IViewPortType {
 }
  
 const PickupGameMap = (): JSX.Element => {
+  const today = new Date().toISOString().slice(0, 10)
   const [location, setLocation] = useState<CreateOrUpdateLocation | null>(null);
-  const [viewport, setViewport] = useState<IViewPortType | null
->(null);
+  const [viewport, setViewport] = useState<IViewPortType | null>(null);
+  const [athletesNeededStart, setAthletesNeededStart] = useState<number | undefined>(1);
+  const [athletesPresentStart, setAthletesPresentStart] = useState<number | undefined>(1);
+  const [athletesNeededEnd, setAthletesNeededEnd] = useState<number | undefined>(10);
+  const [athletesPresentEnd, setAthletesPresentEnd] = useState<number | undefined>(10);
+  const [date, setDate] = useState<string | undefined>(today);
+  const [startTime, setStartTime] = useState<string | undefined>("00:00");
+  const [endTime, setEndTime] = useState<string | undefined>("23:59");
   const mapRef = useRef<MapRef | null>(null);
 
   const { data } = useListLocations({
-    neLatitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lat),
-    neLongitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lng),
-    swLatidude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lat),
-    swLongitude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lng),
+    neLatitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lat).toString(),
+    neLongitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lng).toString(),
+    swLatidude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lat).toString(),
+    swLongitude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lng).toString(),
+    athletesNeededStart: !!athletesNeededStart ? athletesNeededStart.toString() : undefined,
+    athletesNeededEnd: !!athletesNeededEnd ? athletesNeededEnd.toString() : undefined,
+    athletesPresentStart: !!athletesPresentStart ? athletesPresentStart.toString() : undefined,
+    athletesPresentEnd: !!athletesPresentEnd ? athletesPresentEnd.toString() : undefined,
+    date,
+    startTime,
+    endTime,
     enabled: !!mapRef && !!mapRef.current
   });
 
@@ -77,6 +91,62 @@ const PickupGameMap = (): JSX.Element => {
 
   return (
     <div>
+    <label>Athletes Present Range
+      <input 
+        type="number" 
+        name="athletesPresentStart" 
+        value={athletesPresentStart} 
+        onChange={(event) => {setAthletesPresentStart(event.target.valueAsNumber)}}
+      />
+      <input 
+        type="number" 
+        name="athletesPresentEnd" 
+        value={athletesPresentEnd} 
+        onChange={(event) => setAthletesPresentEnd(event.target.valueAsNumber)}
+      />
+    </label>
+    <br />
+    <label>Athletes Needed Range
+      <input 
+        type="number" 
+        name="athletesNeededStart" 
+        value={athletesNeededStart} 
+        onChange={(event) => setAthletesNeededStart(event.target.valueAsNumber)}
+      />
+      <input 
+        type="number" 
+        name="athletesNeededEnd" 
+        value={athletesNeededEnd} 
+        onChange={(event) => setAthletesNeededEnd(event.target.valueAsNumber)}
+      />
+    </label>
+    <br />
+    <label>Date
+      <input 
+        type="date" 
+        name="date" 
+        value={date} 
+        onChange={(event) => setDate(event.target.value)}
+      />
+    </label>
+    <br />
+    <label>Start Time
+      <input 
+        type="time" 
+        name="startTime" 
+        value={startTime} 
+        onChange={(event) => setStartTime(event.target.value)}
+      />
+    </label>
+    <label>End Time
+      <input 
+        type="time" 
+        name="endTime" 
+        value={endTime} 
+        onChange={(event) => setEndTime(event.target.value)}
+      />
+    </label>
+
     {viewport && (
       <Map
         minZoom={16}
