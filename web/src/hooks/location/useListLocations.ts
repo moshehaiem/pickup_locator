@@ -12,10 +12,10 @@ interface IUseListLocationsProps {
   neLongitude: string | null;
   swLatidude: string | null;
   swLongitude: string | null;
-  athletesNeededStart: string | undefined;
-  athletesNeededEnd: string | undefined;
-  athletesPresentStart: string | undefined;
-  athletesPresentEnd: string | undefined;
+  athletesNeededLow: string | undefined;
+  athletesNeededHigh: string | undefined;
+  athletesPresentLow: string | undefined;
+  athletesPresentHigh: string | undefined;
   date: string | undefined;
   startTime: string | undefined;
   endTime: string | undefined;
@@ -27,10 +27,10 @@ function useListLocations({
   neLongitude,
   swLatidude,
   swLongitude,
-  athletesNeededStart,
-  athletesNeededEnd,
-  athletesPresentStart,
-  athletesPresentEnd,
+  athletesNeededLow,
+  athletesNeededHigh,
+  athletesPresentLow,
+  athletesPresentHigh,
   date,
   startTime,
   endTime,
@@ -51,17 +51,17 @@ function useListLocations({
     if(!!swLongitude){
       parameters.sw_longitude = swLongitude;
     }
-    if(!!athletesNeededStart){
-      parameters.athletes_needed_start = athletesNeededStart;
+    if(!!athletesNeededLow){
+      parameters.athletes_needed_low = athletesNeededLow;
     }
-    if(!!athletesNeededEnd){
-      parameters.athletes_needed_end = athletesNeededEnd;
+    if(!!athletesNeededHigh){
+      parameters.athletes_needed_high = athletesNeededHigh;
     }
-    if(!!athletesPresentStart){
-      parameters.athletes_present_start = athletesPresentStart;
+    if(!!athletesPresentLow){
+      parameters.athletes_present_low = athletesPresentLow;
     }
-    if(!!athletesPresentEnd){
-      parameters.athletes_present_end = athletesPresentEnd;
+    if(!!athletesPresentHigh){
+      parameters.athletes_present_high = athletesPresentHigh;
     }
     if(!!date){
       parameters.date = date;
@@ -74,8 +74,8 @@ function useListLocations({
     }
 
     return axiosClient.get(`locations/?${createUrlParameters(parameters)}`);
-  }, [athletesNeededEnd, athletesNeededStart, athletesPresentEnd, athletesPresentStart, axiosClient, date, endTime, neLatitude, neLongitude, startTime, swLatidude, swLongitude]);
-  return useQuery([`locations`, athletesNeededEnd, athletesNeededStart, athletesPresentEnd, athletesPresentStart, date, endTime, neLatitude, neLongitude, startTime, swLatidude, swLongitude], fetchLocations, {
+  }, [athletesNeededHigh, athletesNeededLow, athletesPresentHigh, athletesPresentLow, axiosClient, date, endTime, neLatitude, neLongitude, startTime, swLatidude, swLongitude]);
+  return useQuery([`locations`, athletesNeededHigh, athletesNeededLow, athletesPresentHigh, athletesPresentLow, date, endTime, neLatitude, neLongitude, startTime, swLatidude, swLongitude], fetchLocations, {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
