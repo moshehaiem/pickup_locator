@@ -75,7 +75,11 @@ function useListLocations({
 
     return axiosClient.get(`locations/?${createUrlParameters(parameters)}`);
   }, [athletesNeededEnd, athletesNeededStart, athletesPresentEnd, athletesPresentStart, axiosClient, date, endTime, neLatitude, neLongitude, startTime, swLatidude, swLongitude]);
-  return useQuery([`listLocations`, athletesNeededEnd, athletesNeededStart, athletesPresentEnd, athletesPresentStart, date, endTime, neLatitude, neLongitude, startTime, swLatidude, swLongitude], fetchLocations, {
+  return useQuery([`locations`, athletesNeededEnd, athletesNeededStart, athletesPresentEnd, athletesPresentStart, date, endTime, neLatitude, neLongitude, startTime, swLatidude, swLongitude], fetchLocations, {
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: false,
     enabled,
   });
 }

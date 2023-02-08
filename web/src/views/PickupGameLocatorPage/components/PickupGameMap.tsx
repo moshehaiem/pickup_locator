@@ -25,7 +25,7 @@ const PickupGameMap = (): JSX.Element => {
   const [endTime, setEndTime] = useState<string | undefined>("23:59");
   const mapRef = useRef<MapRef | null>(null);
 
-  const { data } = useListLocations({
+  const { data: locations } = useListLocations({
     neLatitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lat).toString(),
     neLongitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lng).toString(),
     swLatidude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lat).toString(),
@@ -56,7 +56,7 @@ const PickupGameMap = (): JSX.Element => {
 
   const locationMarkers = useMemo(
     () =>
-    data?.data.map((loc: Location, index: number) => (
+    locations?.data.map((loc: Location, index: number) => (
       <Marker
         key={`marker-${index}`}
         longitude={loc.longitude}
@@ -69,7 +69,7 @@ const PickupGameMap = (): JSX.Element => {
         >
       </Marker>
       )),
-    [data, handleMapClick]
+    [locations, handleMapClick]
   );
 
   useEffect(() => {
@@ -165,7 +165,7 @@ const PickupGameMap = (): JSX.Element => {
         <FullscreenControl position="top-left" />
         <NavigationControl position="top-left" />
         <ScaleControl />
-        {data && locationMarkers}
+        {locations && locationMarkers}
         {location && (
           <Popup longitude={location.longitude} latitude={location.latitude}
             key={`${location.longitude}${location.latitude}`}
