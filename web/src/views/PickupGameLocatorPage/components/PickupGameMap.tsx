@@ -91,61 +91,66 @@ const PickupGameMap = (): JSX.Element => {
 
   return (
     <div>
-    <label>Athletes Present Range
-      <input 
-        type="number" 
-        name="athletesPresentLow" 
-        value={athletesPresentLow} 
-        onChange={(event) => {setAthletesPresentLow(event.target.valueAsNumber)}}
-      />
-      <input 
-        type="number" 
-        name="athletesPresentHigh" 
-        value={athletesPresentHigh} 
-        onChange={(event) => setAthletesPresentHigh(event.target.valueAsNumber)}
-      />
-    </label>
-    <br />
-    <label>Athletes Needed Range
-      <input 
-        type="number" 
-        name="athletesNeededLow" 
-        value={athletesNeededLow} 
-        onChange={(event) => setAthletesNeededLow(event.target.valueAsNumber)}
-      />
-      <input 
-        type="number" 
-        name="athletesNeededHigh" 
-        value={athletesNeededHigh} 
-        onChange={(event) => setAthletesNeededHigh(event.target.valueAsNumber)}
-      />
-    </label>
-    <br />
-    <label>Date
-      <input 
-        type="date" 
-        name="date" 
-        value={date} 
-        onChange={(event) => setDate(event.target.value)}
-      />
-    </label>
-    <br />
-    <label>Start Time
-      <input 
-        type="time" 
-        name="startTime" 
-        value={startTime} 
-        onChange={(event) => setStartTime(event.target.value)}
-      />
-    </label>
-    <label>End Time
-      <input 
-        type="time" 
-        name="endTime" 
-        value={endTime} 
-        onChange={(event) => setEndTime(event.target.value)}
-      />
-    </label>
+    {viewport && (
+    <div>
+      <label>Athletes Present Range
+        <input 
+          type="number" 
+          name="athletesPresentLow" 
+          value={athletesPresentLow} 
+          onChange={(event) => {setAthletesPresentLow(event.target.valueAsNumber)}}
+        />
+        <input 
+          type="number" 
+          name="athletesPresentHigh" 
+          value={athletesPresentHigh} 
+          onChange={(event) => setAthletesPresentHigh(event.target.valueAsNumber)}
+        />
+      </label>
+      <br />
+      <label>Athletes Needed Range
+        <input 
+          type="number" 
+          name="athletesNeededLow" 
+          value={athletesNeededLow} 
+          onChange={(event) => setAthletesNeededLow(event.target.valueAsNumber)}
+        />
+        <input 
+          type="number" 
+          name="athletesNeededHigh" 
+          value={athletesNeededHigh} 
+          onChange={(event) => setAthletesNeededHigh(event.target.valueAsNumber)}
+        />
+      </label>
+      <br />
+      <label>Date
+        <input 
+          type="date" 
+          name="date" 
+          value={date} 
+          onChange={(event) => setDate(event.target.value)}
+        />
+      </label>
+      <br />
+      <label>Start Time
+        <input 
+          type="time" 
+          name="startTime" 
+          value={startTime} 
+          onChange={(event) => setStartTime(event.target.value)}
+        />
+      </label>
+      <label>End Time
+        <input 
+          type="time" 
+          name="endTime" 
+          value={endTime} 
+          onChange={(event) => setEndTime(event.target.value)}
+        />
+      </label>
+    </div>
+    )
+    }
 
     {viewport && (
       <Map
