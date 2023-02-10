@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { FullscreenControl, GeolocateControl, Map, MapRef, Marker, NavigationControl, Popup, ScaleControl } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import PickupGamePopup from './PickupGamePopup';
@@ -14,7 +14,7 @@ interface IViewPortType {
  
 const PickupGameMap = (): JSX.Element => {
   const today = new Date().toISOString().slice(0, 10)
-  const [mapRef, setMapRef] = useState<MapRef | null>(null);
+  const mapRef = useRef<MapRef | null>(null);
   const [location, setLocation] = useState<CreateOrUpdateLocation | null>(null);
   const [viewport, setViewport] = useState<IViewPortType | null>(null);
   const [latitudeHigh, setLatitudeHigh] = useState<number | null>(null);
@@ -45,24 +45,14 @@ const PickupGameMap = (): JSX.Element => {
   });
 
   const flyToClickedPoint = useCallback((lng: number, lat: number): void => {
-    if(mapRef){
-      mapRef.flyTo({
+    if(mapRef && mapRef.current){
+      mapRef.current.flyTo({
         center: [lng, lat],
         zoom: 18
       });
     }
   }, [mapRef]);
 
-  const handleMapRef = useCallback((ref: MapRef | null): void => {
-    console.log('creating ref');
-    setMapRef(ref);
-    // if(ref){
-    //   setLatitudeHigh(Math.ceil(ref.getBounds().getNorthEast().lat));
-    //   setLongitudeHigh(Math.ceil(ref.getBounds().getNorthEast().lng));
-    //   setLatitudeLow(Math.ceil(ref.getBounds().getSouthWest().lat));
-    //   setLongitudeLow(Math.ceil(ref.getBounds().getSouthWest().lng));
-    // }
-}, []);
 
   const handleMapClick = useCallback((loc: CreateOrUpdateLocation): void => {
       flyToClickedPoint(loc.longitude, loc.latitude);
@@ -76,7 +66,15 @@ const PickupGameMap = (): JSX.Element => {
     setLatitudeLow(Math.floor(latitude));
     setLongitudeHigh(Math.ceil(longitude));
     setLongitudeLow(Math.floor(longitude));
-}, []);
+  }, []);
+
+  const handleInitialize = useCallback((latitude: number, longitude: number): void => {
+    setViewport({ latitude, longitude, zoom: 18 });
+    setLatitudeHigh(Math.ceil(latitude));
+    setLatitudeLow(Math.floor(latitude));
+    setLongitudeHigh(Math.ceil(longitude));
+    setLongitudeLow(Math.floor(longitude));
+  }, []);
 
   const locationMarkers = useMemo(
     () =>
@@ -96,21 +94,16 @@ const PickupGameMap = (): JSX.Element => {
     [locations, handleMapClick]
   );
 
+
+
   useEffect(() => {
     if(!viewport){
       navigator.geolocation.getCurrentPosition(pos => {
-        setViewport({
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-          zoom: 18
-        });
-      }, () => setViewport({
-        latitude: 10,
-        longitude: 10,
-        zoom: 18
-      }));
+        handleInitialize(pos.coords.latitude, pos.coords.longitude);
+      }, () => handleInitialize(10, 10)
+      );
     }
-  }, [viewport]);
+  }, [handleInitialize, viewport]);
 
 
   return (
@@ -180,7 +173,7 @@ const PickupGameMap = (): JSX.Element => {
       <Map
         minZoom={16}
         maxZoom={20}
-        ref={ref => handleMapRef(ref)}
+        ref={mapRef}
         reuseMaps
         initialViewState={viewport}
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
