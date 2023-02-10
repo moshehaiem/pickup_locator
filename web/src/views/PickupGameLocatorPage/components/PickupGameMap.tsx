@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { FullscreenControl, GeolocateControl, Map, MapRef, Marker, NavigationControl, Popup, ScaleControl } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import PickupGamePopup from './PickupGamePopup';
@@ -14,8 +14,13 @@ interface IViewPortType {
  
 const PickupGameMap = (): JSX.Element => {
   const today = new Date().toISOString().slice(0, 10)
+  const [mapRef, setMapRef] = useState<MapRef | null>(null);
   const [location, setLocation] = useState<CreateOrUpdateLocation | null>(null);
   const [viewport, setViewport] = useState<IViewPortType | null>(null);
+  const [latitudeHigh, setLatitudeHigh] = useState<number | null>(null);
+  const [longitudeHigh, setLongitudeHigh] = useState<number | null>(null);
+  const [latitudeLow, setLatitudeLow] = useState<number | null>(null);
+  const [longitudeLow, setLongitudeLow] = useState<number | null>(null);
   const [athletesNeededLow, setAthletesNeededLow] = useState<number | undefined>(1);
   const [athletesPresentLow, setAthletesPresentLow] = useState<number | undefined>(1);
   const [athletesNeededHigh, setAthletesNeededHigh] = useState<number | undefined>(10);
@@ -23,13 +28,12 @@ const PickupGameMap = (): JSX.Element => {
   const [date, setDate] = useState<string | undefined>(today);
   const [startTime, setStartTime] = useState<string | undefined>("00:00");
   const [endTime, setEndTime] = useState<string | undefined>("23:59");
-  const mapRef = useRef<MapRef | null>(null);
 
   const { data: locations } = useListLocations({
-    neLatitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lat).toString(),
-    neLongitude: mapRef && mapRef.current && Math.ceil(mapRef.current.getBounds().getNorthEast().lng).toString(),
-    swLatidude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lat).toString(),
-    swLongitude: mapRef && mapRef.current && Math.floor(mapRef.current.getBounds().getSouthWest().lng).toString(),
+    latitudeHigh: !!latitudeHigh ? latitudeHigh.toString() : undefined,
+    longitudeHigh: !!longitudeHigh ? longitudeHigh.toString() : undefined,
+    latitudeLow: !!latitudeLow ? latitudeLow.toString() : undefined,
+    longitudeLow: !!longitudeLow ? longitudeLow.toString() : undefined,
     athletesNeededLow: !!athletesNeededLow ? athletesNeededLow.toString() : undefined,
     athletesNeededHigh: !!athletesNeededHigh ? athletesNeededHigh.toString() : undefined,
     athletesPresentLow: !!athletesPresentLow ? athletesPresentLow.toString() : undefined,
@@ -37,22 +41,42 @@ const PickupGameMap = (): JSX.Element => {
     date,
     startTime,
     endTime,
-    enabled: !!mapRef && !!mapRef.current
+    enabled: !!latitudeHigh && !!longitudeHigh && !!latitudeLow && !!longitudeLow
   });
 
   const flyToClickedPoint = useCallback((lng: number, lat: number): void => {
-    if(mapRef && mapRef.current){
-      mapRef.current.flyTo({
+    if(mapRef){
+      mapRef.flyTo({
         center: [lng, lat],
         zoom: 18
       });
     }
   }, [mapRef]);
 
+  const handleMapRef = useCallback((ref: MapRef | null): void => {
+    console.log('creating ref');
+    setMapRef(ref);
+    // if(ref){
+    //   setLatitudeHigh(Math.ceil(ref.getBounds().getNorthEast().lat));
+    //   setLongitudeHigh(Math.ceil(ref.getBounds().getNorthEast().lng));
+    //   setLatitudeLow(Math.ceil(ref.getBounds().getSouthWest().lat));
+    //   setLongitudeLow(Math.ceil(ref.getBounds().getSouthWest().lng));
+    // }
+}, []);
+
   const handleMapClick = useCallback((loc: CreateOrUpdateLocation): void => {
       flyToClickedPoint(loc.longitude, loc.latitude);
       setLocation(loc);
   }, [flyToClickedPoint]);
+
+  const handleMapMove = useCallback((e: any): void => {
+    const latitude = e.viewState.latitude;
+    const longitude = e.viewState.longitude;
+    setLatitudeHigh(Math.ceil(latitude));
+    setLatitudeLow(Math.floor(latitude));
+    setLongitudeHigh(Math.ceil(longitude));
+    setLongitudeLow(Math.floor(longitude));
+}, []);
 
   const locationMarkers = useMemo(
     () =>
@@ -156,12 +180,13 @@ const PickupGameMap = (): JSX.Element => {
       <Map
         minZoom={16}
         maxZoom={20}
-        ref={mapRef}
+        ref={ref => handleMapRef(ref)}
         reuseMaps
         initialViewState={viewport}
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
         style={{width: 1000, height: 800}}
         mapStyle="mapbox://styles/mapbox/streets-v9"
+        onMoveEnd={handleMapMove}
         onClick={(e) => handleMapClick({
           "latitude": e.lngLat.lat, "longitude": e.lngLat.lng, "athletes_present": 0, 
           "athletes_needed": 0, "date": "","start_time": "", 

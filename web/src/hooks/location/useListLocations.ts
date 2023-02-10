@@ -8,10 +8,10 @@ import { UrlParameters } from '../../types/General';
 import { createUrlParameters } from '../../utils/url';
 
 interface IUseListLocationsProps {
-  neLatitude: string | null;
-  neLongitude: string | null;
-  swLatidude: string | null;
-  swLongitude: string | null;
+  latitudeHigh: string | undefined;
+  longitudeHigh: string | undefined;
+  latitudeLow: string | undefined;
+  longitudeLow: string | undefined;
   athletesNeededLow: string | undefined;
   athletesNeededHigh: string | undefined;
   athletesPresentLow: string | undefined;
@@ -23,10 +23,10 @@ interface IUseListLocationsProps {
 }
 
 function useListLocations({
-  neLatitude,
-  neLongitude,
-  swLatidude,
-  swLongitude,
+  latitudeHigh,
+  longitudeHigh,
+  latitudeLow,
+  longitudeLow,
   athletesNeededLow,
   athletesNeededHigh,
   athletesPresentLow,
@@ -39,17 +39,17 @@ function useListLocations({
   const axiosClient = useAxiosClient()
   const fetchLocations = useCallback((): Promise<AxiosResponse<Location[]>> => {
     const parameters = {} as UrlParameters;
-    if(!!neLatitude){
-      parameters.ne_latitude = neLatitude;
+    if(!!latitudeHigh){
+      parameters.latitude_high = latitudeHigh;
     }
-    if(!!neLongitude){
-      parameters.ne_longitude = neLongitude;
+    if(!!longitudeHigh){
+      parameters.longitude_high = longitudeHigh;
     }
-    if(!!swLatidude){
-      parameters.sw_latidude = swLatidude;
+    if(!!latitudeLow){
+      parameters.latidude_low = latitudeLow;
     }
-    if(!!swLongitude){
-      parameters.sw_longitude = swLongitude;
+    if(!!longitudeLow){
+      parameters.longitude_low = longitudeLow;
     }
     if(!!athletesNeededLow){
       parameters.athletes_needed_low = athletesNeededLow;
@@ -74,8 +74,8 @@ function useListLocations({
     }
 
     return axiosClient.get(`locations/?${createUrlParameters(parameters)}`);
-  }, [athletesNeededHigh, athletesNeededLow, athletesPresentHigh, athletesPresentLow, axiosClient, date, endTime, neLatitude, neLongitude, startTime, swLatidude, swLongitude]);
-  return useQuery([`locations`, athletesNeededHigh, athletesNeededLow, athletesPresentHigh, athletesPresentLow, date, endTime, neLatitude, neLongitude, startTime, swLatidude, swLongitude], fetchLocations, {
+  }, [athletesNeededHigh, athletesNeededLow, athletesPresentHigh, athletesPresentLow, axiosClient, date, endTime, latitudeHigh, longitudeHigh, startTime, latitudeLow, longitudeLow]);
+  return useQuery([`locations`, athletesNeededHigh, athletesNeededLow, athletesPresentHigh, athletesPresentLow, date, endTime, latitudeHigh, longitudeHigh, startTime, latitudeLow, longitudeLow], fetchLocations, {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
