@@ -8,14 +8,14 @@ import { UrlParameters } from '../../types/General';
 import { createUrlParameters } from '../../utils/url';
 
 interface IUseListLocationsProps {
-  neLatitude: string | null;
-  neLongitude: string | null;
-  swLatidude: string | null;
-  swLongitude: string | null;
-  athletesNeededStart: string | undefined;
-  athletesNeededEnd: string | undefined;
-  athletesPresentStart: string | undefined;
-  athletesPresentEnd: string | undefined;
+  latitudeHigh: number | undefined;
+  longitudeHigh: number | undefined;
+  latitudeLow: number | undefined;
+  longitudeLow: number | undefined;
+  athletesNeededLow: number | undefined;
+  athletesNeededHigh: number | undefined;
+  athletesPresentLow: number | undefined;
+  athletesPresentHigh: number | undefined;
   date: string | undefined;
   startTime: string | undefined;
   endTime: string | undefined;
@@ -23,14 +23,14 @@ interface IUseListLocationsProps {
 }
 
 function useListLocations({
-  neLatitude,
-  neLongitude,
-  swLatidude,
-  swLongitude,
-  athletesNeededStart,
-  athletesNeededEnd,
-  athletesPresentStart,
-  athletesPresentEnd,
+  latitudeHigh,
+  longitudeHigh,
+  latitudeLow,
+  longitudeLow,
+  athletesNeededLow,
+  athletesNeededHigh,
+  athletesPresentLow,
+  athletesPresentHigh,
   date,
   startTime,
   endTime,
@@ -39,29 +39,29 @@ function useListLocations({
   const axiosClient = useAxiosClient()
   const fetchLocations = useCallback((): Promise<AxiosResponse<Location[]>> => {
     const parameters = {} as UrlParameters;
-    if(!!neLatitude){
-      parameters.ne_latitude = neLatitude;
+    if(!!latitudeHigh){
+      parameters.latitude_high = latitudeHigh.toString();
     }
-    if(!!neLongitude){
-      parameters.ne_longitude = neLongitude;
+    if(!!longitudeHigh){
+      parameters.longitude_high = longitudeHigh.toString();
     }
-    if(!!swLatidude){
-      parameters.sw_latidude = swLatidude;
+    if(!!latitudeLow){
+      parameters.latidude_low = latitudeLow.toString();
     }
-    if(!!swLongitude){
-      parameters.sw_longitude = swLongitude;
+    if(!!longitudeLow){
+      parameters.longitude_low = longitudeLow.toString();
     }
-    if(!!athletesNeededStart){
-      parameters.athletes_needed_start = athletesNeededStart;
+    if(!!athletesNeededLow){
+      parameters.athletes_needed_low = athletesNeededLow.toString();
     }
-    if(!!athletesNeededEnd){
-      parameters.athletes_needed_end = athletesNeededEnd;
+    if(!!athletesNeededHigh){
+      parameters.athletes_needed_high = athletesNeededHigh.toString();
     }
-    if(!!athletesPresentStart){
-      parameters.athletes_present_start = athletesPresentStart;
+    if(!!athletesPresentLow){
+      parameters.athletes_present_low = athletesPresentLow.toString();
     }
-    if(!!athletesPresentEnd){
-      parameters.athletes_present_end = athletesPresentEnd;
+    if(!!athletesPresentHigh){
+      parameters.athletes_present_high = athletesPresentHigh.toString();
     }
     if(!!date){
       parameters.date = date;
@@ -74,8 +74,12 @@ function useListLocations({
     }
 
     return axiosClient.get(`locations/?${createUrlParameters(parameters)}`);
-  }, [athletesNeededEnd, athletesNeededStart, athletesPresentEnd, athletesPresentStart, axiosClient, date, endTime, neLatitude, neLongitude, startTime, swLatidude, swLongitude]);
-  return useQuery([`listLocations`, athletesNeededEnd, athletesNeededStart, athletesPresentEnd, athletesPresentStart, date, endTime, neLatitude, neLongitude, startTime, swLatidude, swLongitude], fetchLocations, {
+  }, [athletesNeededHigh, athletesNeededLow, athletesPresentHigh, athletesPresentLow, axiosClient, date, endTime, latitudeHigh, longitudeHigh, startTime, latitudeLow, longitudeLow]);
+  return useQuery([`locations`, athletesNeededHigh, athletesNeededLow, athletesPresentHigh, athletesPresentLow, date, endTime, latitudeHigh, longitudeHigh, startTime, latitudeLow, longitudeLow], fetchLocations, {
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: false,
     enabled,
   });
 }

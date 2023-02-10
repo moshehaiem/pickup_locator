@@ -10,41 +10,41 @@ class LocationViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Location.objects.all()
-        ne_latitude = self.request.query_params.get("ne_latitude", None)
-        ne_longitude = self.request.query_params.get("ne_longitude", None)
-        sw_latidude = self.request.query_params.get("sw_latidude", None)
-        sw_longitude = self.request.query_params.get("sw_longitude", None)
-        athletes_needed_start = self.request.query_params.get(
-            "athletes_needed_start", None
+        latitude_high = self.request.query_params.get("latitude_high", None)
+        longitude_high = self.request.query_params.get("longitude_high", None)
+        latidude_low = self.request.query_params.get("latidude_low", None)
+        longitude_low = self.request.query_params.get("longitude_low", None)
+        athletes_needed_low = self.request.query_params.get(
+            "athletes_needed_low", None
         )
-        athletes_needed_end = self.request.query_params.get("athletes_needed_end", None)
-        athletes_present_start = self.request.query_params.get(
-            "athletes_present_start", None
+        athletes_needed_high = self.request.query_params.get("athletes_needed_high", None)
+        athletes_present_low = self.request.query_params.get(
+            "athletes_present_low", None
         )
-        athletes_present_end = self.request.query_params.get(
-            "athletes_present_end", None
+        athletes_present_high = self.request.query_params.get(
+            "athletes_present_high", None
         )
         date = self.request.query_params.get("date", None)
         start_time = self.request.query_params.get("start_time", None)
         end_time = self.request.query_params.get("end_time", None)
-        if ne_latitude:
-            queryset = queryset.filter(latitude__lte=int(ne_latitude))
-        if ne_longitude:
-            queryset = queryset.filter(longitude__lte=int(ne_longitude))
-        if sw_latidude:
-            queryset = queryset.filter(latitude__gte=int(sw_latidude))
-        if sw_longitude:
-            queryset = queryset.filter(longitude__gte=int(sw_longitude))
-        if athletes_needed_start:
-            queryset = queryset.filter(athletes_needed__gte=int(athletes_needed_start))
-        if athletes_needed_end:
-            queryset = queryset.filter(athletes_needed__lte=int(athletes_needed_end))
-        if athletes_present_start:
+        if latitude_high:
+            queryset = queryset.filter(latitude__lte=int(latitude_high))
+        if longitude_high:
+            queryset = queryset.filter(longitude__lte=int(longitude_high))
+        if latidude_low:
+            queryset = queryset.filter(latitude__gte=int(latidude_low))
+        if longitude_low:
+            queryset = queryset.filter(longitude__gte=int(longitude_low))
+        if athletes_needed_low:
+            queryset = queryset.filter(athletes_needed__gte=int(athletes_needed_low))
+        if athletes_needed_high:
+            queryset = queryset.filter(athletes_needed__lte=int(athletes_needed_high))
+        if athletes_present_low:
             queryset = queryset.filter(
-                athletes_present__gte=int(athletes_present_start)
+                athletes_present__gte=int(athletes_present_low)
             )
-        if athletes_present_end:
-            queryset = queryset.filter(athletes_present__lte=int(athletes_present_end))
+        if athletes_present_high:
+            queryset = queryset.filter(athletes_present__lte=int(athletes_present_high))
         if date:
             queryset = queryset.filter(date=date)
         if start_time:
