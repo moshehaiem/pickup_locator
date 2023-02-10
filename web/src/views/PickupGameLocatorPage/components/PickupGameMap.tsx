@@ -100,7 +100,7 @@ const PickupGameMap = (): JSX.Element => {
     if(!viewport){
       navigator.geolocation.getCurrentPosition(pos => {
         handleInitialize(pos.coords.latitude, pos.coords.longitude);
-      }, () => handleInitialize(10, 10)
+      }, () => handleInitialize(10.1, 10.1)
       );
     }
   }, [handleInitialize, viewport]);
