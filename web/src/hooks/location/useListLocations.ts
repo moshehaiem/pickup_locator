@@ -8,14 +8,14 @@ import { UrlParameters } from '../../types/General';
 import { createUrlParameters } from '../../utils/url';
 
 interface IUseListLocationsProps {
-  latitudeHigh: string | undefined;
-  longitudeHigh: string | undefined;
-  latitudeLow: string | undefined;
-  longitudeLow: string | undefined;
-  athletesNeededLow: string | undefined;
-  athletesNeededHigh: string | undefined;
-  athletesPresentLow: string | undefined;
-  athletesPresentHigh: string | undefined;
+  latitudeHigh: number | undefined;
+  longitudeHigh: number | undefined;
+  latitudeLow: number | undefined;
+  longitudeLow: number | undefined;
+  athletesNeededLow: number | undefined;
+  athletesNeededHigh: number | undefined;
+  athletesPresentLow: number | undefined;
+  athletesPresentHigh: number | undefined;
   date: string | undefined;
   startTime: string | undefined;
   endTime: string | undefined;
@@ -40,28 +40,28 @@ function useListLocations({
   const fetchLocations = useCallback((): Promise<AxiosResponse<Location[]>> => {
     const parameters = {} as UrlParameters;
     if(!!latitudeHigh){
-      parameters.latitude_high = latitudeHigh;
+      parameters.latitude_high = latitudeHigh.toString();
     }
     if(!!longitudeHigh){
-      parameters.longitude_high = longitudeHigh;
+      parameters.longitude_high = longitudeHigh.toString();
     }
     if(!!latitudeLow){
-      parameters.latidude_low = latitudeLow;
+      parameters.latidude_low = latitudeLow.toString();
     }
     if(!!longitudeLow){
-      parameters.longitude_low = longitudeLow;
+      parameters.longitude_low = longitudeLow.toString();
     }
     if(!!athletesNeededLow){
-      parameters.athletes_needed_low = athletesNeededLow;
+      parameters.athletes_needed_low = athletesNeededLow.toString();
     }
     if(!!athletesNeededHigh){
-      parameters.athletes_needed_high = athletesNeededHigh;
+      parameters.athletes_needed_high = athletesNeededHigh.toString();
     }
     if(!!athletesPresentLow){
-      parameters.athletes_present_low = athletesPresentLow;
+      parameters.athletes_present_low = athletesPresentLow.toString();
     }
     if(!!athletesPresentHigh){
-      parameters.athletes_present_high = athletesPresentHigh;
+      parameters.athletes_present_high = athletesPresentHigh.toString();
     }
     if(!!date){
       parameters.date = date;

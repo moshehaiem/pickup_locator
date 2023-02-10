@@ -121,7 +121,9 @@ const PickupGamePopup = ({ location }: IPickupGamePopupProps): JSX.Element => {
       />
       </label>
       <br />
-      <button disabled={!loc.location_id} onClick={handleDelete}>delete</button>
+      {loc.location_id &&
+        <button onClick={handleDelete}>delete</button>
+      }
       <button disabled={isSubmittable || loadingSubmit} onClick={handleSubmit}>submit</button>
     </div>
   );

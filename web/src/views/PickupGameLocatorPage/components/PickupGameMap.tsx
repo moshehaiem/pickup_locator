@@ -16,11 +16,11 @@ const PickupGameMap = (): JSX.Element => {
   const today = new Date().toISOString().slice(0, 10)
   const mapRef = useRef<MapRef | null>(null);
   const [location, setLocation] = useState<CreateOrUpdateLocation | null>(null);
-  const [viewport, setViewport] = useState<IViewPortType | null>(null);
-  const [latitudeHigh, setLatitudeHigh] = useState<number | null>(null);
-  const [longitudeHigh, setLongitudeHigh] = useState<number | null>(null);
-  const [latitudeLow, setLatitudeLow] = useState<number | null>(null);
-  const [longitudeLow, setLongitudeLow] = useState<number | null>(null);
+  const [viewport, setViewport] = useState<IViewPortType | undefined>();
+  const [latitudeHigh, setLatitudeHigh] = useState<number | undefined>();
+  const [longitudeHigh, setLongitudeHigh] = useState<number | undefined>();
+  const [latitudeLow, setLatitudeLow] = useState<number | undefined>();
+  const [longitudeLow, setLongitudeLow] = useState<number | undefined>();
   const [athletesNeededLow, setAthletesNeededLow] = useState<number | undefined>(1);
   const [athletesPresentLow, setAthletesPresentLow] = useState<number | undefined>(1);
   const [athletesNeededHigh, setAthletesNeededHigh] = useState<number | undefined>(10);
@@ -29,15 +29,15 @@ const PickupGameMap = (): JSX.Element => {
   const [startTime, setStartTime] = useState<string | undefined>("00:00");
   const [endTime, setEndTime] = useState<string | undefined>("23:59");
 
-  const { data: locations } = useListLocations({
-    latitudeHigh: !!latitudeHigh ? latitudeHigh.toString() : undefined,
-    longitudeHigh: !!longitudeHigh ? longitudeHigh.toString() : undefined,
-    latitudeLow: !!latitudeLow ? latitudeLow.toString() : undefined,
-    longitudeLow: !!longitudeLow ? longitudeLow.toString() : undefined,
-    athletesNeededLow: !!athletesNeededLow ? athletesNeededLow.toString() : undefined,
-    athletesNeededHigh: !!athletesNeededHigh ? athletesNeededHigh.toString() : undefined,
-    athletesPresentLow: !!athletesPresentLow ? athletesPresentLow.toString() : undefined,
-    athletesPresentHigh: !!athletesPresentHigh ? athletesPresentHigh.toString() : undefined,
+  const { data: locations, isLoading, isSuccess, isError } = useListLocations({
+    latitudeHigh,
+    longitudeHigh,
+    latitudeLow,
+    longitudeLow,
+    athletesNeededLow,
+    athletesNeededHigh,
+    athletesPresentLow,
+    athletesPresentHigh,
     date,
     startTime,
     endTime,
@@ -94,8 +94,6 @@ const PickupGameMap = (): JSX.Element => {
     [locations, handleMapClick]
   );
 
-
-
   useEffect(() => {
     if(!viewport){
       navigator.geolocation.getCurrentPosition(pos => {
@@ -105,10 +103,17 @@ const PickupGameMap = (): JSX.Element => {
     }
   }, [handleInitialize, viewport]);
 
+  if(isLoading){
+    return <>Loading....</>
+  }
+
+  if(isError){
+    return <>An error has occured, please try again later</>
+  }
 
   return (
     <div>
-    {viewport && (
+    {viewport && isSuccess && (
     <div>
       <label>Athletes Present Range
         <input 
@@ -169,7 +174,7 @@ const PickupGameMap = (): JSX.Element => {
     )
     }
 
-    {viewport && (
+    {viewport && isSuccess && (
       <Map
         minZoom={16}
         maxZoom={20}
